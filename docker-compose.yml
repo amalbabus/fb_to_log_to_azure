@@ -1,0 +1,25 @@
+version: '3'
+services:
+  logstash:
+    container_name: logstash
+    image: docker.elastic.co/logstash/logstash:6.7.0
+    ports:
+      - 5044:5044
+    environment:
+      SERVER_NAME: logstash.local
+    volumes:
+      - ./logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+      - ./logstash/logstash.yml:/usr/share/logstash/config/logstash.yml
+    networks:
+      - esnet
+  filebeat:
+    container_name: filebeat
+    build:
+      context: .
+      dockerfile: filebeat.Dockerfile
+    volumes:
+      - ./logs:/var/log
+    networks:
+      - esnet
+networks:
+  esnet:
